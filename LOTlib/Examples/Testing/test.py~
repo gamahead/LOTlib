@@ -1,0 +1,39 @@
+
+from LOTlib.Miscellaneous import unique
+from LOTlib.Grammar import Grammar
+from LOTlib.Hypotheses.LOTHypothesis import LOTHypothesis
+
+G = Grammar()
+
+G.add_rule('Start','',['String'],1.0)
+
+G.add_rule('String','One',['Number'],1.0)
+G.add_rule('String','Two',['Number','Number'],1.0)
+G.add_rule('String','Three',['Number','Number','Number'],1.0)
+
+G.add_rule('Number','1','i',1.0)
+G.add_rule('Number','2','ii',1.0)
+G.add_rule('Number','3','iii',1.0)
+
+
+from LOTlib.DataAndObjects import FunctionData, Obj # for nicely managing data
+from LOTlib.Inference.MetropolisHastings import mh_sample # for running MCMC
+
+
+h0 = LOTHypothesis(G, args=['String'])
+
+# OR if we want to specify and use insert/delete proposals
+#from LOTlib.Proposals import *
+#h0 = LOTHypothesis(G, proposal_function=MixtureProposal(G, [RegenerationProposal(G), InsertDeleteProposal(G)] ) )
+
+for i in xrange(100):
+	print G.generate()
+"""
+# MCMC!
+for h in mh_sample(h0, 4000,debug = True): # run sampler
+#for h in unique(mh_sample(h0, data, 4000)): # get unique samples
+        # hypotheses' .prior, .likelihood, and .posterior_score are set in mh_sample
+        print h.likelihood, h.prior, h.posterior_score, h
+
+
+"""
